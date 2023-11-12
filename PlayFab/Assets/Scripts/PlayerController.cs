@@ -15,10 +15,13 @@ public class PlayerController : MonoBehaviour
     private int collectabledPicked;
     public int maxCollectables = 10;
 
+    public GameObject playButton;
+    public TextMeshProUGUI curTimeText;
+
     private bool isPlaying;
 
 
-    private void Awake()
+    void Awake()
     {
         rig = GetComponent<Rigidbody>();
     }
@@ -33,18 +36,23 @@ public class PlayerController : MonoBehaviour
 
         rig.velocity = new Vector3(x, rig.velocity.y, z);
 
+        curTimeText.text = (Time.time - startTime).ToString("F2");
+
     }
 
     public void Begin ()
     {
         startTime = Time.time;  
         isPlaying = true;
+        playButton.SetActive(false);   
     }
 
     void End ()
     {
         timeTaken = Time.time - startTime;
         isPlaying = false;
+        Leaderboard.instance.SetLeaderboardEntry(-Mathf.RoundToInt(timeTaken * 1000.0f));
+        playButton.SetActive(false);
     }
 
     void OnTriggerEnter (Collider other)
