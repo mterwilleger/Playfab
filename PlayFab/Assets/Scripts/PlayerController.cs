@@ -25,8 +25,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //if (!isPlaying)
-        //    return;
+        if (!isPlaying)
+            return;
 
         float x = Input.GetAxis("Horizontal") * speed;
         float z = Input.GetAxis("Vertical") * speed;
