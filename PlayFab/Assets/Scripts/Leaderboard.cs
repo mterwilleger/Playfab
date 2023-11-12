@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 using PlayFab;
 using PlayFab.ClientModels;
+using TMPro;
 
 public class Leaderboard : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class Leaderboard : MonoBehaviour
     public GameObject[] leaderboardEntries;
 
     public static Leaderboard instance;
-    private void Awake() { instance = this; }
+    void Awake() { instance = this; }
 
     public void OnLoggedIn ()
     {
@@ -19,9 +19,23 @@ public class Leaderboard : MonoBehaviour
         DisplayLeaderboard();
     }
 
+    public void SetLeaderboardEntry (int newScore)
+    {
+        ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest
+        {
+            FunctionName = "UpdateHighscore",
+            FunctionParameter = new { score = newScore }
+        };
+
+        PlayFabClientAPI.ExecuteCloudScript(request,
+            result => DisplayLeaderboard(),
+            error => Debug.Log(error.ErrorMessage)
+            );
+    }
+
     public void DisplayLeaderboard ()
     {
-        GetLeaderboardRequest getLeaderboardRequest = new GetLeaderboardRequest()
+        GetLeaderboardRequest getLeaderboardRequest = new GetLeaderboardRequest
         {
             StatisticName = "FastestTime",
             MaxResultsCount = 10
@@ -41,8 +55,11 @@ public class Leaderboard : MonoBehaviour
             leaderboardEntries[x].SetActive(x < leaderboard.Count);
             if (x >= leaderboard.Count)
                 continue;
+
             leaderboardEntries[x].transform.Find("PlayerName").GetComponent<TextMeshProUGUI>().text = (leaderboard[x].Position + 1) + ". " + leaderboard[x].DisplayName;
             leaderboardEntries[x].transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = (-(float)leaderboard[x].StatValue * 0.001f).ToString();
         }
     }
+
+   
 }
