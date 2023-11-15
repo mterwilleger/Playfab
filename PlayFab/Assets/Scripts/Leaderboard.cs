@@ -28,7 +28,12 @@ public class Leaderboard : MonoBehaviour
         };
 
         PlayFabClientAPI.ExecuteCloudScript(request,
-            result => DisplayLeaderboard(),
+            result =>
+            {
+                DisplayLeaderboard();
+                //Debug.Log(result.ToJson());
+
+            },
             error => Debug.Log(error.ErrorMessage)
             );
     }
